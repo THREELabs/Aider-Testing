@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple 3D-like Shooting Game</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            perspective: 1000px;
+            background-color: #87CEEB;
+        }
+        #game-container {
+            width: 100vw;
+            height: 100vh;
+            transform-style: preserve-3d;
+        }
+        .target {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background-color: red;
+            border-radius: 50%;
+            transform-style: preserve-3d;
+            cursor: pointer;
+        }
+        #score {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 24px;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container"></div>
+    <div id="score">Score: 0</div>
+
+    <script>
+        const gameContainer = document.getElementById('game-container');
+        const scoreElement = document.getElementById('score');
+        let score = 0;
+
+        function createTarget() {
+            const target = document.createElement('div');
+            target.className = 'target';
+            
+            const x = Math.random() * window.innerWidth;
+            const y = Math.random() * window.innerHeight;
+            const z = Math.random() * -2000 - 1000;
+            
+            target.style.transform = `translate3d(${x}px, ${y}px, ${z}px)`;
+            
+            target.addEventListener('click', () => {
+                score++;
+                scoreElement.textContent = `Score: ${score}`;
+                gameContainer.removeChild(target);
+                createTarget();
+            });
+            
+            gameContainer.appendChild(target);
+            
+            setTimeout(() => {
+                if (gameContainer.contains(target)) {
+                    gameContainer.removeChild(target);
+                    createTarget();
+                }
+            }, 3000);
+        }
+
+        for (let i = 0; i < 5; i++) {
+            createTarget();
+        }
+
+        document.addEventListener('mousemove', (e) => {
+            const rotateX = -(e.clientY / window.innerHeight - 0.5) * 20;
+            const rotateY = (e.clientX / window.innerWidth - 0.5) * 20;
+            gameContainer.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+        });
+    </script>
+</body>
+</html>
